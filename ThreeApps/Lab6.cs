@@ -61,18 +61,15 @@ namespace ThreeApps
 
             try
             {
-                // Introduce a delay (you can adjust the duration based on your application's needs)
+
                 Thread.Sleep(1000); // 1 second delay
 
-                // Convert the values to bytes
                 byte[] intBytes = BitConverter.GetBytes(amount);
                 byte[] doubleBytes1 = BitConverter.GetBytes(minValue);
                 byte[] doubleBytes2 = BitConverter.GetBytes(maxValue);
 
-                // Concatenate the byte arrays into a single byte array
                 byte[] buffer = intBytes.Concat(doubleBytes1).Concat(doubleBytes2).ToArray();
 
-                // Send the byte array to App2 through the named pipe
                 serverStream.Write(buffer, 0, buffer.Length);
             }
             catch (Exception ex)
@@ -94,10 +91,8 @@ namespace ThreeApps
         {
             try
             {
-                // Create an AutoReset event handle for communication with Object2
                 eventHandle = new EventWaitHandle(false, EventResetMode.AutoReset, "EventObject2To1");
 
-                // Start a thread to continuously listen for the event from Object2
                 Thread listenThread = new Thread(ListenForObject2Event);
                 listenThread.Start();
             }
@@ -113,17 +108,12 @@ namespace ThreeApps
             {
                 while (true)
                 {
-                    // Wait for the event to be signaled by Object2
                     eventHandle.WaitOne();
 
-                    // Reset the event to non-signaled state
                     eventHandle.Reset();
 
-                    // Perform tasks in response to the event from Object2
-                    // Add your logic here
                     Console.WriteLine("Object1 received the signal from Object2");
 
-                    // Signal Object3 after processing the event from Object2
                     SignalObject3();
                 }
             }
@@ -137,7 +127,6 @@ namespace ThreeApps
         {
             try
             {
-                // Assuming "EventObject1Completed" is the event name shared between Object1 and Object3
                 using (EventWaitHandle eventHandle = EventWaitHandle.OpenExisting("EventObject1Completed"))
                 {
                     eventHandle.Set();
@@ -145,9 +134,7 @@ namespace ThreeApps
             }
             catch (WaitHandleCannotBeOpenedException)
             {
-                // Handle the case where the event doesn't exist (perhaps Object3 hasn't started yet)
-                // You might want to create the event here if needed
-                // eventHandle = new EventWaitHandle(false, EventResetMode.AutoReset, "EventObject1Completed");
+
             }
             catch (Exception ex)
             {

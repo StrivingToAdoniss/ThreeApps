@@ -13,7 +13,8 @@ namespace Object3
             InitializeComponent();
             InitializeEventHandle();
             StartListeningForObject1Signal();
-            //LoadClipboardData();
+
+            FormClosing += object3_FormClosing;
         }
 
         private void InitializeEventHandle()
@@ -116,6 +117,22 @@ namespace Object3
             {
                 listBox1.Items.Add(value);
             }
+        }
+
+        private void object3_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                // Prevent the form from closing
+                e.Cancel = true;
+            }
+            else 
+            {
+                listenThread.Abort();
+            }
+
+
+
         }
     }
 }

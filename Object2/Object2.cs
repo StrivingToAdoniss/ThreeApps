@@ -11,16 +11,17 @@ namespace Object2
             InitializeComponent();
             StartPipeClient();
 
-            // Start a separate thread to continuously listen for incoming data
             Thread receiveThread = new Thread(ReceiveData);
             receiveThread.Start();
-            //LoadGeneratedList(n, minValue, maxValue);
+
+            
+
+            FormClosing += object2_FormClosing;
 
         }
 
         private void StartPipeClient()
         {
-            // Connect to the named pipe created by App1
             clientStream = new NamedPipeClientStream(".", "Lab6_Pipe", PipeDirection.In);
             clientStream.Connect();
         }
@@ -33,26 +34,21 @@ namespace Object2
             {
                 while (true)
                 {
-                    // Read data from the pipe
-                    byte[] buffer = new byte[4096]; // Adjust the buffer size as needed
+                    byte[] buffer = new byte[4096];
                     int bytesRead = clientStream.Read(buffer, 0, buffer.Length);
 
-                    // Extract the values from the received byte array
                     int receivedIntValue = BitConverter.ToInt32(buffer, 0);
                     double receivedDoubleValue1 = BitConverter.ToDouble(buffer, sizeof(int));
                     double receivedDoubleValue2 = BitConverter.ToDouble(buffer, sizeof(int) + sizeof(double));
 
 
-
-                    // Invoke UI-related operations on the main UI thread
                     Invoke(new Action(() =>
                     {
 
                         LoadGeneratedList(receivedIntValue, receivedDoubleValue1, receivedDoubleValue2);
                         Thread.Sleep(1000);
                         SignalObject1();
-                        // Display or use the received values as needed
-                        //MessageBox.Show($"Received data:\nInt: {receivedIntValue}\nDouble 1: {receivedDoubleValue1}\nDouble 2: {receivedDoubleValue2}");
+
                     }));
 
 
@@ -68,17 +64,14 @@ namespace Object2
         {
             try
             {
-                // Assuming "EventObject2To1" is the event name shared between Object2 and Object1
                 using (EventWaitHandle eventHandle = EventWaitHandle.OpenExisting("EventObject2To1"))
                 {
                     eventHandle.Set();
                 }
             }
-            catch (WaitHandleCannotBeOpenedException)
+            catch (WaitHandleCannotBeOpenedException ex)
             {
-                // Handle the case where the event doesn't exist (perhaps Object1 hasn't started yet)
-                // You might want to create the event here if needed
-                // eventHandle = new EventWaitHandle(false, EventResetMode.AutoReset, "EventObject2To1");
+                MessageBox.Show("Error opening handling Object1: " + ex.Message);
             }
             catch (Exception ex)
             {
@@ -86,7 +79,7 @@ namespace Object2
             }
         }
 
-            private void LoadGeneratedList(int n, double minValue, double maxValue)
+        private void LoadGeneratedList(int n, double minValue, double maxValue)
         {
             if (n == 0)
             {
@@ -132,6 +125,7 @@ namespace Object2
         }
 
 
+
         private void CopyDoublesToClipboard(double[] doubleArray)
         {
             string doubleArrayString = string.Join(';', doubleArray);
@@ -146,6 +140,21 @@ namespace Object2
             {
                 Console.WriteLine("Failed to copy array of doubles to the Clipboard.");
             }
+        }
+
+        private void object2_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                // Prevent the form from closing
+                e.Cancel = true;
+            }
+            else 
+            {
+                clientStream.Close();
+            }
+
+
         }
     }
 

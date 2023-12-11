@@ -49,6 +49,7 @@
             Controls.Add(listBox1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
             Name = "Object3";
             Text = "Object3";
             ResumeLayout(false);

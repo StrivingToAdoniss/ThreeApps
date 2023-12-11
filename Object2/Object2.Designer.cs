@@ -35,19 +35,22 @@
             // listBox1
             // 
             listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(12, 12);
+            listBox1.ItemHeight = 32;
+            listBox1.Location = new Point(22, 26);
+            listBox1.Margin = new Padding(6, 6, 6, 6);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(186, 124);
+            listBox1.Size = new Size(342, 260);
             listBox1.TabIndex = 0;
             // 
             // Object2
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(210, 158);
+            ClientSize = new Size(431, 337);
             Controls.Add(listBox1);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(6, 6, 6, 6);
+            MaximizeBox = false;
             Name = "Object2";
             Text = "Object2";
             ResumeLayout(false);
